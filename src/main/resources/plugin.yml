@@ -1,0 +1,4 @@
+name: ChromTeleports
+version: '${version}'
+main: me.chrommob.chromteleports.ChromTeleports
+api-version: 1.19
