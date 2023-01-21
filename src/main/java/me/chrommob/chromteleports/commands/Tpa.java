@@ -3,14 +3,15 @@ package me.chrommob.chromteleports.commands;
 import co.aikar.commands.annotation.CommandAlias;
 import co.aikar.commands.annotation.CommandCompletion;
 import co.aikar.commands.annotation.Default;
+import co.aikar.commands.annotation.Subcommand;
 import me.chrommob.chromteleports.ChromTeleports;
 import me.chrommob.chromteleports.delays.dataholders.CommandType;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 
+@CommandAlias("tpa")
 public class Tpa {
-    @CommandAlias("tpa")
     @Default
     @SuppressWarnings("unused")
     @CommandCompletion("@players")
@@ -26,6 +27,11 @@ public class Tpa {
         }
         if (!targetOnline) {
             sender.sendMessage("Hrac " + targetString + " neni online!");
+            return;
+        }
+        if (ChromTeleports.instance().getRequestsStorage().hasRequest(player.getName())) {
+            player.sendMessage("Jiz mas otevreny pozadavek na teleportaci!");
+            player.sendMessage("Napis \"/tpa cancel\" aby si ho zrušil.");
             return;
         }
         CommandType type = CommandType.TPA;
@@ -58,6 +64,22 @@ public class Tpa {
         if (!canUse) {
             return;
         }
+        ChromTeleports.instance().getRequestsStorage().addRequest(player.getName(), target.getName());
 //        ChromTeleports.instance().getDelayGetter().setLastUsed(sender.getName(), type, currentTime);
+    }
+
+    @Subcommand("cancel")
+    @SuppressWarnings("unused")
+    public void onCancel(CommandSender sender) {
+        if (!(sender instanceof Player player)) {
+            sender.sendMessage("You must be a player to use this command!");
+            return;
+        }
+        if (!ChromTeleports.instance().getRequestsStorage().hasRequest(player.getName())) {
+            player.sendMessage("Nemas otevreny pozadavek na teleportaci!");
+            return;
+        }
+        ChromTeleports.instance().getRequestsStorage().removeRequest(player.getName());
+        player.sendMessage("Tvuj pozadavek na teleportaci byl uspesne zrusen!");
     }
 }
