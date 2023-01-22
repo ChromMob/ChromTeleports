@@ -1,7 +1,9 @@
 package me.chrommob.chromteleports;
 
 import co.aikar.commands.PaperCommandManager;
+import me.chrommob.chromteleports.commands.Tpa;
 import me.chrommob.chromteleports.delays.DelayGetter;
+import me.chrommob.chromteleports.events.MoveListener;
 import me.chrommob.chromteleports.teleport.RequestsStorage;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -18,11 +20,16 @@ public final class ChromTeleports extends JavaPlugin {
         manager = new PaperCommandManager(this);
         delayGetter = new DelayGetter();
         requestsStorage = new RequestsStorage();
+        registerEvents();
         registerCommands();
     }
 
     private void registerCommands() {
+        manager.registerCommand(new Tpa());
+    }
 
+    private void registerEvents() {
+        getServer().getPluginManager().registerEvents(new MoveListener(this), this);
     }
 
     @Override
