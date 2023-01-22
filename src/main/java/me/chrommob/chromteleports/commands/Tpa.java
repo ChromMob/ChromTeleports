@@ -9,6 +9,8 @@ import com.github.puregero.multilib.MultiLib;
 import me.chrommob.chromteleports.ChromTeleports;
 import me.chrommob.chromteleports.delays.dataholders.CommandType;
 import me.chrommob.chromteleports.teleport.TeleportationRequest;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachmentInfo;
@@ -20,7 +22,7 @@ public class Tpa extends BaseCommand {
     @CommandCompletion("@players")
     public void onTpa(CommandSender sender, String targetString) {
         if (!(sender instanceof Player player)) {
-            sender.sendMessage("You must be a player to use this command!");
+            sender.sendMessage(Component.text("You must be a player to use this command!").color(NamedTextColor.RED));
             return;
         }
         boolean targetOnline = false;
@@ -29,16 +31,16 @@ public class Tpa extends BaseCommand {
             targetOnline = true;
         }
         if (!targetOnline) {
-            sender.sendMessage("Hrac " + targetString + " neni online!");
+            sender.sendMessage(Component.text("Hrac neni online!").color(NamedTextColor.RED));
             return;
         }
         if (target == player) {
-            sender.sendMessage("Nemuzes se teleportovat na sebe!");
+            sender.sendMessage(Component.text("Nemuzes se teleportovat sam na sebe!").color(NamedTextColor.RED));
             return;
         }
         if (ChromTeleports.instance().getRequestsStorage().hasRequest(player.getName())) {
-            player.sendMessage("Jiz mas otevreny pozadavek na teleportaci!");
-            player.sendMessage("Napis \"/tpa cancel\" aby si ho zrusil.");
+            player.sendMessage(Component.text("Jiz mas existujici pozadavek na teleport.").color(NamedTextColor.RED));
+            player.sendMessage(Component.text("Napis \"/tpa cancel\" aby si ho zrusil.").color(NamedTextColor.AQUA));
             return;
         }
         CommandType type = CommandType.TPA;
@@ -53,25 +55,25 @@ public class Tpa extends BaseCommand {
                     try {
                         delay = Long.parseLong(split[2]) * 1000;
                         if (currentTime - lastUsed >= delay) {
-                            player.sendMessage("Poslal jsi pozadavek na teleportaci hraci " + targetString + "!");
-                            player.sendMessage("Hrac " + targetString + " ma " + 60 + " sekund na prijmuti pozadavku!");
+                            player.sendMessage(Component.text("Poslal jsi pozadavek na teleportaci hraci ").color(NamedTextColor.WHITE).append(Component.text(targetString).color(NamedTextColor.AQUA)).append(Component.text("!").color(NamedTextColor.WHITE)));
+                            player.sendMessage(Component.text("Napis \"/tpa cancel\" aby si pozadavek zrusil.").color(NamedTextColor.AQUA));
                             canUse = true;
                         } else {
-                            player.sendMessage("Musis jeste pockat " + Math.round((delay - (currentTime - lastUsed)) / 1000.0) + " sekund pred tim, nez muzes znovu pouzit tento prikaz!");
+                            player.sendMessage(Component.text("Musis jeste pockat ").color(NamedTextColor.WHITE).append(Component.text(Math.round((delay - (currentTime - lastUsed)) / 1000.0) + " sekund").color(NamedTextColor.RED)).append(Component.text(" pred tim, nez muzes znovu pouzit tento prikaz!").color(NamedTextColor.WHITE)));
                         }
                         break;
                     } catch (NumberFormatException ignored) {
-                        player.sendMessage("Nastala chyba pri zpracovani pozadavku! Otevri si ticket na nasem discordu!");
+                        player.sendMessage(Component.text("Nastala chyba pri zpracovani pozadavku! Otevri si ticket na nasem discordu!").color(NamedTextColor.RED));
                         break;
                     }
                 }
             }
-            player.sendMessage("Nastala chyba pri zpracovani pozadavku! Otevri si ticket na nasem discordu!");
+            player.sendMessage(Component.text("Nastala chyba pri zpracovani pozadavku! Otevri si ticket na nasem discordu!").color(NamedTextColor.RED));
         }
         if (!canUse) {
             return;
         }
-        target.sendMessage("Hrac " + player.getName() + " se chce teleportovat na tebe!");
+        target.sendMessage(Component.text("Hrac ").color(NamedTextColor.WHITE).append(Component.text(player.getName()).color(NamedTextColor.AQUA)).append(Component.text(" se chce teleportovat na tebe!").color(NamedTextColor.WHITE)));
         ChromTeleports.instance().getRequestsStorage().addRequest(player.getName(), target.getName());
     }
 
@@ -79,15 +81,15 @@ public class Tpa extends BaseCommand {
     @SuppressWarnings("unused")
     public void onCancel(CommandSender sender) {
         if (!(sender instanceof Player player)) {
-            sender.sendMessage("You must be a player to use this command!");
+            sender.sendMessage(Component.text("You must be a player to use this command!").color(NamedTextColor.RED));
             return;
         }
         if (!ChromTeleports.instance().getRequestsStorage().hasRequest(player.getName())) {
-            player.sendMessage("Nemas otevreny pozadavek na teleportaci!");
+            player.sendMessage(Component.text("Nemas otevreny pozadavek na teleportaci!").color(NamedTextColor.RED));
             return;
         }
         ChromTeleports.instance().getRequestsStorage().removeRequest(player.getName());
-        player.sendMessage("Tvuj pozadavek na teleportaci byl uspesne zrusen!");
+        player.sendMessage(Component.text("Tvuj pozadavek na teleportaci byl uspesne ").color(NamedTextColor.WHITE).append(Component.text("zrusen").color(NamedTextColor.AQUA)).append(Component.text("!").color(NamedTextColor.WHITE)));
     }
 
     @Subcommand("accept")
@@ -95,11 +97,11 @@ public class Tpa extends BaseCommand {
     @CommandCompletion("@players")
     public void onAccept(CommandSender sender, String targetString) {
         if (!(sender instanceof Player player)) {
-            sender.sendMessage("You must be a player to use this command!");
+            sender.sendMessage(Component.text("You must be a player to use this command!").color(NamedTextColor.RED));
             return;
         }
         if (player.getName().equals(targetString)) {
-            player.sendMessage("Nemuzes prijmout pozadavek na teleportaci od sebe!");
+            player.sendMessage(Component.text("Nemuzes prijmout pozadavek na teleportaci od sebe!").color(NamedTextColor.RED));
             return;
         }
         boolean targetOnline = false;
@@ -108,7 +110,7 @@ public class Tpa extends BaseCommand {
             targetOnline = true;
         }
         if (!targetOnline) {
-            sender.sendMessage("Hrac " + targetString + " neni online!");
+            sender.sendMessage(Component.text("Hrac ").color(NamedTextColor.WHITE).append(Component.text(targetString).color(NamedTextColor.RED)).append(Component.text(" neni online!").color(NamedTextColor.WHITE)));
             return;
         }
         if (MultiLib.isExternalPlayer(target)) {
@@ -116,11 +118,11 @@ public class Tpa extends BaseCommand {
         } else {
             TeleportationRequest request = ChromTeleports.instance().getRequestsStorage().getRequest(target.getName());
             if (request == null) {
-                player.sendMessage("Hrac " + targetString + " nema otevreny pozadavek na teleportaci!");
+                player.sendMessage(Component.text("Hrac ").color(NamedTextColor.WHITE).append(Component.text(targetString).color(NamedTextColor.RED)).append(Component.text(" nema otevreny pozadavek na teleportaci!").color(NamedTextColor.WHITE)));
                 return;
             }
             if (!request.getSender().equals(player.getName())) {
-                player.sendMessage("Hrac " + targetString + " nema otevreny pozadavek na teleportaci od tebe!");
+                player.sendMessage(Component.text("Hrac ").color(NamedTextColor.WHITE).append(Component.text(targetString).color(NamedTextColor.RED)).append(Component.text(" nema otevreny pozadavek na teleportaci od tebe!").color(NamedTextColor.WHITE)));
                 return;
             }
             request.accept();

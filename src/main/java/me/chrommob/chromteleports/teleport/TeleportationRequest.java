@@ -2,8 +2,12 @@ package me.chrommob.chromteleports.teleport;
 
 import me.chrommob.chromteleports.ChromTeleports;
 import me.chrommob.chromteleports.delays.dataholders.CommandType;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+
+import javax.naming.Name;
 
 public class TeleportationRequest {
     private boolean moved = false;
@@ -21,7 +25,7 @@ public class TeleportationRequest {
             if (!accepted) {
                 Player player = Bukkit.getPlayer(sender);
                 if (player != null) {
-                    player.sendMessage("Tvuj pozadavek na teleportaci expiroval!");
+                    player.sendMessage(Component.text("Tvuj pozadavek na teleportaci expiroval!").color(NamedTextColor.RED));
                 }
             }
         }, 20 * 60);
@@ -33,21 +37,22 @@ public class TeleportationRequest {
         Player receiver = Bukkit.getPlayer(this.receiver);
         if (sender == null || receiver == null) {
             if (receiver != null) {
-                receiver.sendMessage("Hrac jiz neni online");
+                receiver.sendMessage(Component.text("Hrac jiz neni online.").color(NamedTextColor.RED));
             }
             return;
         }
-        sender.sendMessage("Teleportuji te, 3 sekundy se nehybej.");
+        sender.sendMessage(Component.text("Teleportuji te, 3 sekundy se ").color(NamedTextColor.WHITE).append(Component.text("nehybej!").color(NamedTextColor.RED)));
         moved = false;
         Bukkit.getScheduler().runTaskLater(ChromTeleports.instance(), () -> {
             if (!moved) {
                 sender.teleport(receiver);
-                sender.sendMessage("Teleportuji...");
-                receiver.sendMessage("Teleportuji...");
+                Component teleport = Component.text("Teleportuji...").color(NamedTextColor.DARK_GREEN);
+                sender.sendMessage(teleport);
+                receiver.sendMessage(teleport);
                 ChromTeleports.instance().getDelayGetter().setLastUsed(getSender(), CommandType.TPA, System.currentTimeMillis());
             } else {
-                sender.sendMessage("Pohnul jsi se teleport zrusen.");
-                receiver.sendMessage(getSender() + " se pohnul rusim teleportaci.");
+                sender.sendMessage(Component.text("Pohnul jsi se teleport zrusen.").color(NamedTextColor.RED));
+                receiver.sendMessage(Component.text(getSender() + " se ").color(NamedTextColor.WHITE).append(Component.text("pohnul").color(NamedTextColor.RED)).append(Component.text(" rusim teleportaci.").color(NamedTextColor.WHITE)));
             }
             ChromTeleports.instance().getRequestsStorage().removeRequest(getSender());
         }, 20*3);
