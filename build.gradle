@@ -27,6 +27,7 @@ dependencies {
     compileOnly 'io.papermc.paper:paper-api:1.19.2-R0.1-SNAPSHOT'
     implementation "com.github.puregero:multilib:1.1.12"
     implementation "co.aikar:acf-paper:0.5.1-SNAPSHOT"
+    implementation "com.zaxxer:HikariCP:5.0.1"
 }
 
 shadowJar {

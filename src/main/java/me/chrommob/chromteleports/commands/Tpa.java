@@ -1,14 +1,11 @@
 package me.chrommob.chromteleports.commands;
 
 import co.aikar.commands.BaseCommand;
-import co.aikar.commands.annotation.CommandAlias;
-import co.aikar.commands.annotation.CommandCompletion;
-import co.aikar.commands.annotation.Default;
-import co.aikar.commands.annotation.Subcommand;
+import co.aikar.commands.annotation.*;
 import com.github.puregero.multilib.MultiLib;
 import me.chrommob.chromteleports.ChromTeleports;
 import me.chrommob.chromteleports.delays.dataholders.CommandType;
-import me.chrommob.chromteleports.teleport.TeleportationRequest;
+import me.chrommob.chromteleports.tpa.TeleportationRequest;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.command.CommandSender;
@@ -20,6 +17,7 @@ public class Tpa extends BaseCommand {
     @Default
     @SuppressWarnings("unused")
     @CommandCompletion("@players")
+    @CommandPermission("chromteleports.tpa.use")
     public void onTpa(CommandSender sender, String targetString) {
         if (!(sender instanceof Player player)) {
             sender.sendMessage(Component.text("You must be a player to use this command!").color(NamedTextColor.RED));
@@ -49,7 +47,7 @@ public class Tpa extends BaseCommand {
         boolean canUse = false;
         long delay = 0;
         for (PermissionAttachmentInfo info : player.getEffectivePermissions()) {
-            if (info.getPermission().startsWith("chromteleports.delay.")) {
+            if (info.getPermission().startsWith("chromteleports.tpa.delay.")) {
                 String[] split = info.getPermission().split("\\.");
                 if (split.length == 3) {
                     try {
@@ -78,6 +76,7 @@ public class Tpa extends BaseCommand {
     }
 
     @Subcommand("cancel")
+    @CommandPermission("chromteleports.tpa.cancel")
     @SuppressWarnings("unused")
     public void onCancel(CommandSender sender) {
         if (!(sender instanceof Player player)) {
@@ -95,6 +94,7 @@ public class Tpa extends BaseCommand {
     @Subcommand("accept")
     @SuppressWarnings("unused")
     @CommandCompletion("@players")
+    @CommandPermission("chromteleports.tpa.accept")
     public void onAccept(CommandSender sender, String targetString) {
         if (!(sender instanceof Player player)) {
             sender.sendMessage(Component.text("You must be a player to use this command!").color(NamedTextColor.RED));

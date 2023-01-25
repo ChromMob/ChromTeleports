@@ -7,3 +7,24 @@ commands:
   tpa:
     description: Teleport to a player
     usage: /tpa <player>
+    permission: chromteleports.tpa.use
+  tpa cancel:
+    description: Cancel a teleport request
+    usage: /tpa cancel <player>
+    permission: chromteleports.tpa.cancel
+  tpa accept:
+    description: Accept a teleport request
+    usage: /tpa accept <player>
+    permission: chromteleports.tpa.accept
+  home:
+    description: Teleport to a home
+    usage: /home <home>
+    permission: chromteleports.home.use
+  home set:
+    description: Set a home
+    usage: /home set <home>
+    permission: chromteleports.home.set
+  home delete:
+    description: Delete a home
+    usage: /home delete <home>
+    permission: chromteleports.home.delete

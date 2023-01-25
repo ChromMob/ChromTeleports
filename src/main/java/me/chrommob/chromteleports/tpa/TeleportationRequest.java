@@ -1,4 +1,4 @@
-package me.chrommob.chromteleports.teleport;
+package me.chrommob.chromteleports.tpa;
 
 import me.chrommob.chromteleports.ChromTeleports;
 import me.chrommob.chromteleports.delays.dataholders.CommandType;
@@ -6,8 +6,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-
-import javax.naming.Name;
 
 public class TeleportationRequest {
     private boolean moved = false;
