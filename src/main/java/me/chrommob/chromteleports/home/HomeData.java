@@ -30,21 +30,24 @@ public class HomeData {
         });
     }
 
-    public HomeData(String name, Player player) {
+    public HomeData(String name, Location location, UUID player, boolean save) {
         this.name = name;
-        this.x = player.getLocation().getX();
-        this.y = player.getLocation().getY();
-        this.z = player.getLocation().getZ();
-        this.world = player.getLocation().getWorld().getName();
-        this.yaw = player.getLocation().getYaw();
-        this.pitch = player.getLocation().getPitch();
+        this.x = location.getX();
+        this.y = location.getY();
+        this.z = location.getZ();
+        this.world = location.getWorld().getName();
+        this.yaw = location.getYaw();
+        this.pitch = location.getPitch();
         this.loaded = true;
-        writeToDatabase(player.getUniqueId());
+        if (save) {
+            writeToDatabase(player);
+        }
     }
 
     public void teleport(Player player) {
         taskId = Bukkit.getScheduler().runTaskTimerAsynchronously(ChromTeleports.instance(), () -> {
             if (!loaded) {
+                ChromTeleports.instance().getLogger().warning("Waiting for home data to load... for " + player.getName());
                 return;
             }
             scheduleTeleport(player);
@@ -57,6 +60,8 @@ public class HomeData {
             return;
         }
         teleporting = true;
+        moved = false;
+        player.sendMessage(Component.text("Teleportuji te, 3 sekundy se ").color(NamedTextColor.WHITE).append(Component.text("nehybej!").color(NamedTextColor.RED)));
         Bukkit.getScheduler().runTaskLater(ChromTeleports.instance(), () -> {
             if (!moved) {
                 player.teleport(new Location(Bukkit.getWorld(world), x, y, z, yaw, pitch));

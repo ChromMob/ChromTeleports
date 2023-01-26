@@ -49,9 +49,9 @@ public class Tpa extends BaseCommand {
         for (PermissionAttachmentInfo info : player.getEffectivePermissions()) {
             if (info.getPermission().startsWith("chromteleports.tpa.delay.")) {
                 String[] split = info.getPermission().split("\\.");
-                if (split.length == 3) {
+                if (split.length == 4) {
                     try {
-                        delay = Long.parseLong(split[2]) * 1000;
+                        delay = Integer.parseInt(split[3]) * 1000L;
                         if (currentTime - lastUsed >= delay) {
                             player.sendMessage(Component.text("Poslal jsi pozadavek na teleportaci hraci ").color(NamedTextColor.WHITE).append(Component.text(targetString).color(NamedTextColor.AQUA)).append(Component.text("!").color(NamedTextColor.WHITE)));
                             player.sendMessage(Component.text("Napis \"/tpa cancel\" aby si pozadavek zrusil.").color(NamedTextColor.AQUA));
@@ -66,7 +66,6 @@ public class Tpa extends BaseCommand {
                     }
                 }
             }
-            player.sendMessage(Component.text("Nastala chyba pri zpracovani pozadavku! Otevri si ticket na nasem discordu!").color(NamedTextColor.RED));
         }
         if (!canUse) {
             return;
@@ -121,8 +120,8 @@ public class Tpa extends BaseCommand {
                 player.sendMessage(Component.text("Hrac ").color(NamedTextColor.WHITE).append(Component.text(targetString).color(NamedTextColor.RED)).append(Component.text(" nema otevreny pozadavek na teleportaci!").color(NamedTextColor.WHITE)));
                 return;
             }
-            if (!request.getSender().equals(player.getName())) {
-                player.sendMessage(Component.text("Hrac ").color(NamedTextColor.WHITE).append(Component.text(targetString).color(NamedTextColor.RED)).append(Component.text(" nema otevreny pozadavek na teleportaci od tebe!").color(NamedTextColor.WHITE)));
+            if (!request.getReceiver().equalsIgnoreCase(player.getName())) {
+                player.sendMessage(Component.text("Hrac ").color(NamedTextColor.WHITE).append(Component.text(targetString).color(NamedTextColor.RED)).append(Component.text(" nema otevreny pozadavek na teleportaci na tebe!").color(NamedTextColor.WHITE)));
                 return;
             }
             request.accept();

@@ -28,3 +28,7 @@ commands:
     description: Delete a home
     usage: /home delete <home>
     permission: chromteleports.home.delete
+  home list:
+    description: List all homes
+    usage: /home list
+    permission: chromteleports.home.list

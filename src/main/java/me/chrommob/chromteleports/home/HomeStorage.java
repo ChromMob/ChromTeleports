@@ -2,6 +2,8 @@ package me.chrommob.chromteleports.home;
 
 import com.github.puregero.multilib.MultiLib;
 import me.chrommob.chromteleports.ChromTeleports;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 
 import java.util.HashSet;
@@ -12,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public class HomeStorage {
-    private final Map<UUID, Set<HomeData>> homes = new ConcurrentHashMap<>();
+    private final Map<UUID, Set<HomeData>> homes = ChromTeleports.instance().getDatabaseLoader().loadAllHomes();
     public HomeStorage() {
         MultiLib.onString(ChromTeleports.instance(), "home:create", s -> {
             String[] split = s.split(" ");
@@ -35,23 +37,39 @@ public class HomeStorage {
         });
     }
 
-    public void addHome(Player player, String name) {
-        MultiLib.notify("home:create", player.getUniqueId() + " " + name);
+    public boolean addHome(Player player, String name, boolean overwrite) {
         homes.putIfAbsent(player.getUniqueId(), new HashSet<>());
-        homes.get(player.getUniqueId()).add(new HomeData(name, player));
+        if (homes.get(player.getUniqueId()).stream().anyMatch(home -> home.getName().equalsIgnoreCase(name))) {
+            if (overwrite) {
+                removeHome(player, name);
+                homes.get(player.getUniqueId()).add(new HomeData(name, player.getLocation(), player.getUniqueId(), true));
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            homes.get(player.getUniqueId()).add(new HomeData(name, player.getLocation(), player.getUniqueId(), true));
+            return true;
+        }
     }
 
     public void removeHome(Player player, String name) {
-        MultiLib.notify("home:delete", player.getUniqueId() + " " + name);
         if (!homes.containsKey(player.getUniqueId())) {
             return;
         }
+        boolean found = false;
         for (HomeData home : homes.get(player.getUniqueId())) {
             if (home.getName().equalsIgnoreCase(name)) {
                 homes.get(player.getUniqueId()).remove(home);
+                found = true;
                 break;
             }
         }
+        if (!found) {
+            return;
+        }
+        ChromTeleports.instance().getDatabaseLoader().deleteHomeData(name, player.getUniqueId());
+        MultiLib.notify("home:delete", player.getUniqueId() + " " + name);
     }
 
     public Set<String> getHomes(Player sender) {
