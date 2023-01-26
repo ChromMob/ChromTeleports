@@ -68,7 +68,7 @@ public class DatabaseLoader {
         PreparedStatement ps = null;
         try {
             conn = hikari.getConnection();
-            ps = conn.prepareStatement("CREATE TABLE IF NOT EXISTS chrom_teleports_home (id INT NOT NULL AUTO_INCREMENT, player VARCHAR(16), home VARCHAR(16), world VARCHAR(16), x DOUBLE, y DOUBLE, z DOUBLE, yaw FLOAT, pitch FLOAT)");
+            ps = conn.prepareStatement("CREATE TABLE IF NOT EXISTS chrom_teleports_home (id INT NOT NULL AUTO_INCREMENT, player VARCHAR(16), home VARCHAR(16), world VARCHAR(16), x DOUBLE, y DOUBLE, z DOUBLE, yaw FLOAT, pitch FLOAT, PRIMARY KEY (id))");
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
