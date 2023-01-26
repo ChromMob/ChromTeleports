@@ -118,6 +118,12 @@ public class DatabaseLoader {
             ps.setDouble(6, homeData.getZ());
             ps.setFloat(7, homeData.getYaw());
             ps.setFloat(8, homeData.getPitch());
+            ps.setString(9, homeData.getWorld());
+            ps.setDouble(10, homeData.getX());
+            ps.setDouble(11, homeData.getY());
+            ps.setDouble(12, homeData.getZ());
+            ps.setFloat(13, homeData.getYaw());
+            ps.setFloat(14, homeData.getPitch());
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
