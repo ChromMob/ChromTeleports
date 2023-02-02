@@ -70,6 +70,27 @@ public class Home extends BaseCommand {
             sender.sendMessage("Only players can use this command!");
             return;
         }
+        int count = 0;
+        for (PermissionAttachmentInfo info : player.getEffectivePermissions()) {
+            if (info.getPermission().startsWith("chromteleports.home.count.")) {
+                String[] split = info.getPermission().split("\\.");
+                if (split.length == 4) {
+                    try {
+                        count = Integer.parseInt(split[3]);
+                    } catch (NumberFormatException ignored) {
+                        player.sendMessage(Component.text("Nastala chyba pri zpracovani pozadavku! Otevri si ticket na nasem discordu!").color(NamedTextColor.RED));
+                    }
+                }
+            }
+        }
+        if (count == 0) {
+            player.sendMessage(Component.text("Nemas pravo na vytvareni home!").color(NamedTextColor.RED));
+            return;
+        }
+        if (ChromTeleports.instance().getHomeStorage().getHomes(player).size() + 1 >= count) {
+            player.sendMessage(Component.text("Muzes mit maximalne ").color(NamedTextColor.WHITE).append(Component.text(count).color(NamedTextColor.AQUA)).append(Component.text(" home!").color(NamedTextColor.WHITE)));
+            return;
+        }
         Bukkit.getScheduler().runTaskAsynchronously(ChromTeleports.instance(), () -> {
             if (ChromTeleports.instance().getHomeStorage().addHome(player, name, overwrite)) {
                 MultiLib.notify("home:create", player.getUniqueId() + " " + name);
