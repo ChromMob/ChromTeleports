@@ -2,23 +2,27 @@ package me.chrommob.chromteleports.home;
 
 import com.github.puregero.multilib.MultiLib;
 import me.chrommob.chromteleports.ChromTeleports;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public class HomeStorage {
-    private final Map<UUID, Set<HomeData>> homes = ChromTeleports.instance().getDatabaseLoader().loadAllHomes();
+    private final Map<UUID, Set<HomeData>> homes = ChromTeleports.instance().getHomeDatabaseLoader().loadAllHomes();
     public HomeStorage() {
         MultiLib.onString(ChromTeleports.instance(), "home:create", s -> {
             String[] split = s.split(" ");
             UUID player = UUID.fromString(split[0]);
+            if (homes.containsKey(player)) {
+                for (HomeData home : homes.get(player)) {
+                    if (home.getName().equalsIgnoreCase(split[1])) {
+                        return;
+                    }
+                }
+            }
             homes.putIfAbsent(player, new HashSet<>());
             homes.get(player).add(new HomeData(split[1], player));
         });
@@ -68,7 +72,7 @@ public class HomeStorage {
         if (!found) {
             return;
         }
-        ChromTeleports.instance().getDatabaseLoader().deleteHomeData(name, player.getUniqueId());
+        ChromTeleports.instance().getHomeDatabaseLoader().deleteHomeData(name, player.getUniqueId());
         MultiLib.notify("home:delete", player.getUniqueId() + " " + name);
     }
 

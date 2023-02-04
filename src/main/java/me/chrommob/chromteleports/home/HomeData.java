@@ -26,7 +26,7 @@ public class HomeData {
         this.name = name;
         this.loaded = false;
         Bukkit.getScheduler().runTaskAsynchronously(ChromTeleports.instance(), () -> {
-            ChromTeleports.instance().getDatabaseLoader().requestHomeData(name, player, this);
+            ChromTeleports.instance().getHomeDatabaseLoader().requestHomeData(name, player, this);
         });
     }
 
@@ -76,7 +76,7 @@ public class HomeData {
 
     private void writeToDatabase(UUID player) {
         Bukkit.getScheduler().runTaskAsynchronously(ChromTeleports.instance(), () -> {
-            ChromTeleports.instance().getDatabaseLoader().writeHomeData(this, player);
+            ChromTeleports.instance().getHomeDatabaseLoader().writeHomeData(this, player);
         });
     }
 

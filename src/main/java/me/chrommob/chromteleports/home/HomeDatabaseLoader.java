@@ -3,7 +3,6 @@ package me.chrommob.chromteleports.home;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import me.chrommob.chromteleports.ChromTeleports;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -18,11 +17,11 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class DatabaseLoader {
+public class HomeDatabaseLoader {
     private final FileConfiguration pluginConfig = ChromTeleports.instance().getConfig();
     private HikariDataSource hikari;
 
-    public DatabaseLoader() {
+    public HomeDatabaseLoader() {
         ChromTeleports.instance().getLogger().info("DatabaseManager initialized!");
         setupPool();
         createTable();
